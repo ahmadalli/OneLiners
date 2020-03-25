@@ -53,3 +53,17 @@ function scrollToBottom() {
 
 setInterval(scrollToBottom, 100)
 ```
+
+# Nuget
+
+## OneLiner Multiple Package Installer
+
+you need to add this function to your `Profile.ps1` ([more info](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles))
+
+```powershell
+function nugetip ([Parameter(ValueFromRemainingArguments=$true)][string[]]$packages) {
+    Foreach ($package in $packages) {
+        install-package $package
+    }
+}
+```
