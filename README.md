@@ -41,3 +41,15 @@ kubectl get pods --all-namespaces | grep Evicted | awk {'print $1" " $2'} | whil
 ```bash
 kubectl get pods --all-namespaces | grep Terminating | awk {'print $1" " $2'} | while read ln; do kubectl delete pod --grace-period=0 --force -n $ln; done
 ```
+
+# Chromium Developer Tool
+
+## Scrool to The Buttom of Lazy Loaded Page
+
+```js
+function scrollToBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+setInterval(scrollToBottom, 100)
+```
