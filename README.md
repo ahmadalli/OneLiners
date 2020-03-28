@@ -82,5 +82,5 @@ on osx, `/etc/passwd` is incomplete. you need to use `dscacheutil -q user | grep
 
 
 ```bash
-dscacheutil -q user | grep dir | cut -d" " -f2 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then echo -n {} && echo ":" && cat $file | grep . && echo; fi'
+dscacheutil -q user | grep dir | cut -d" " -f2 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then printf {} && echo ":" && cat $file | grep . && echo; fi'
 ```
