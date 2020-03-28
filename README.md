@@ -73,5 +73,5 @@ function nugetip ([Parameter(ValueFromRemainingArguments=$true)][string[]]$packa
 ## Print All Authorized Keys for All Users
 
 ```bash
-cat /etc/passwd | cut -d: -f6 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then echo -n {} && echo ":" && cat $file | grep . && echo; fi'
+cat /etc/passwd | grep -Ev "^#" | cut -d: -f6 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then echo -n {} && echo ":" && cat $file | grep . && echo; fi'
 ```
