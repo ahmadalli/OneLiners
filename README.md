@@ -84,3 +84,17 @@ on osx, `/etc/passwd` is incomplete. you need to use `dscacheutil -q user | grep
 ```bash
 dscacheutil -q user | grep dir | cut -d" " -f2 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then printf {} && echo ":" && cat $file | grep . && echo; fi'
 ```
+
+# Ansible
+
+## Download Docker Compose
+
+add it to `tasks` section of your ansible playbook or to the tasks of your role
+
+```ansible
+- name: install docker-compose
+  get_url:
+    dest: /usr/local/bin/docker-compose
+    url: https://github.com/docker/compose/releases/latest/download/docker-compose-{{ansible_system}}-{{ansible_userspace_architecture}}
+    mode: 755
+```
