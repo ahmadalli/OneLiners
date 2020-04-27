@@ -76,6 +76,14 @@ function nugetip ([Parameter(ValueFromRemainingArguments=$true)][string[]]$packa
 cat /etc/passwd | grep -Ev "^#" | cut -d: -f6 | xargs -I {} sh -c 'file={}/.ssh/authorized_keys; if [ -f $file ]; then echo -n {} && echo ":" && cat $file | grep . && echo; fi'
 ```
 
+## Http Request Timing
+
+thanks to [this page](https://netbeez.net/blog/http-transaction-timing-breakdown-with-curl/). I've just added `http_code` to it
+
+```bash
+curl -o /dev/null -s <url> -w "code:          %{http_code}\nlookup:        %{time_namelookup}\nconnect:       %{time_connect}\nappconnect:    %{time_appconnect}\npretransfer:   %{time_pretransfer}\nredirect:      %{time_redirect}\nstarttransfer: %{time_starttransfer}\ntotal:         %{time_total}\n------------------------------\n"
+```
+
 ### OSX
 
 on osx, `/etc/passwd` is incomplete. you need to use `dscacheutil -q user | grep dir | cut -d" " -f2` for getting home directory of users instead. so on osx the command will be this:
