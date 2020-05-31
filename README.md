@@ -126,6 +126,8 @@ sunstone doesn't include ram, cpu and hdd on the list page and I needed it for d
   pip install yq
   ```
 
+### The Script
+
 ```bash
 for id in `onevm list | cut -d' ' -f4 | grep .`; do 
   onevm show $id --xml > $id.xml; 
