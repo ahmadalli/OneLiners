@@ -88,42 +88,41 @@ curl -o /dev/null -s <url> -w "code:          %{http_code}\nlookup:        %{tim
 
 ### Requirements
 
-- access from runner host to both hosts
+- access from source host to both hosts
 - stable network on the host that runs this script to the source host
-- access from source host to target host
 
-you can setup ssh-agent, then ssh into one of the hosts and run this script
+you can setup ssh-agent, then ssh into the source hosts and run this script
 
-- you must fill `source_host`, `target_host`, `lvm_group`, and `lvm_name` variables before running it (it's fillable and not a argument so you doable check before running it)
+- you must fill `target_host`, `lvm_group`, and `lvm_name` variables before running it (it's fillable and not a argument so you doable check before running it)
 
 ### The Script
+
+run this on the source host
 
 ```bash
 #!/bin/sh
 
-source_host=""
 target_host=""
 lvm_group=""
 lvm_name=""
 
-if [[ ! -z $source_host ]] && [[ ! -z $target_host ]] && [[ ! -z $lvm_group ]] && [[ ! -z $lvm_name ]]; then
+if [[ ! -z $target_host ]] && [[ ! -z $lvm_group ]] && [[ ! -z $lvm_name ]]; then
   lvm_path="/dev/$lvm_group/$lvm_name"
-  lvm_size=$(ssh $source_host lvs $lvm_path -o LV_SIZE --noheadings --units g | xargs)
-  read -p "copying $lvm_path with size of $lvm_size from $source_host to $target_host. is it ok? (y/n) " -n 1 -r
+  lvm_size=$(lvs $lvm_path -o LV_SIZE --noheadings --units g | xargs)
+  read -p "copying $lvm_path with size of $lvm_size to $target_host. is it ok? (y/n) " -n 1 -r
   echo # (optional) move to a new line
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "creating volume on target"
     ssh $target_host lvcreate -n $lvm_name $lvm_group -L $lvm_size
-    echo "activating volume on source"
-    ssh $source_host lvchange -a y $lvm_path
-    echo "moving volume from source to target"
-    ssh $source_host sh -c "dd if=$lvm_path | ssh $target_host dd of=$lvm_path"
-  else
-    echo "apparently it's not ok :) bye bye..."
+    echo "activating volume"
+    lvchange -a y $lvm_path
+    echo "moving volume to the target"
+    dd if=$lvm_path bs=4M | ssh $target_host dd of=$lvm_path bs=4M
   fi
 else
-  echo "you must fill source_host, target_host, lvm_group, and lvm_name variables"
+  echo "you must fill target_host, lvm_group, and lvm_name variables"
 fi
+
 ```
 
 ### OSX
