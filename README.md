@@ -106,3 +106,36 @@ add it to `tasks` section of your ansible playbook or to the tasks of your role
     url: https://github.com/docker/compose/releases/latest/download/docker-compose-{{ansible_system}}-{{ansible_userspace_architecture}}
     mode: 755
 ```
+
+# OpenNebula
+
+## RAM, CPU, HDD, and Residence Stats of VMS on CSV
+
+sunstone doesn't include ram, cpu and hdd on the list page and I needed it for detailed host stats, so here it is. 
+
+### Tools Required
+
+- onevm access
+- jq
+  ```bash
+  sudo wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -O /usr/local/bin/jq
+  sudo chmod +x /usr/local/bin/jq
+  ```
+- yq
+  ```bash
+  pip install yq
+  ```
+
+```bash
+for id in `onevm list | cut -d' ' -f4 | grep .`; do 
+  onevm show $id --xml > $id.xml; 
+done
+echo "<VMS>" > vms
+cat *.xml >> vms
+echo "</VMS>" >> vms
+rm *.xml
+cat vms | xq '[.VMS.VM[] | { id: .ID, name: .NAME, memory: ((.TEMPLATE.MEMORY | tonumber) / 1024), cpu: (.TEMPLATE.CPU | tonumber), disk: ((.TEMPLATE.DISK.SIZE | tonumber) / 1024), hostname: (.HISTORY_RECORDS.HISTORY | if type != "array" then [.] else . end | .[0]).HOSTNAME}]' > data.json
+rm vms
+cat data.json | jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > data.csv
+rm data.json
+```
