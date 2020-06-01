@@ -170,14 +170,21 @@ sunstone doesn't include ram, cpu and hdd on the list page and I needed it for d
 ### The Script
 
 ```bash
+#!/bin/bash
+
+set -e
+
+echo "downloading vm info"
 for id in `onevm list | cut -d' ' -f4 | grep .`; do 
   onevm show $id --xml > $id.xml; 
 done
+echo "merging vm infos"
 echo "<VMS>" > vms
 cat *.xml >> vms
 echo "</VMS>" >> vms
 rm *.xml
-cat vms | xq '[.VMS.VM[] | { id: .ID, name: .NAME, memory: ((.TEMPLATE.MEMORY | tonumber) / 1024), cpu: (.TEMPLATE.CPU | tonumber), disk: ((.TEMPLATE.DISK.SIZE | tonumber) / 1024), hostname: (.HISTORY_RECORDS.HISTORY | if type != "array" then [.] else . end | last).HOSTNAME}]' > data.json
+echo "extracting stats"
+cat vms | xq '[.VMS.VM[] | { id: .ID, name: .NAME, cpu: (.TEMPLATE.CPU | tonumber), memory: ((.TEMPLATE.MEMORY | tonumber) / 1024), disk: ((.TEMPLATE.DISK.SIZE | tonumber) / 1024), hostname: (.HISTORY_RECORDS.HISTORY | if type != "array" then [.] else . end | last).HOSTNAME}]' > data.json
 rm vms
 cat data.json | jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > data.csv
 rm data.json
