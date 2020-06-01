@@ -177,7 +177,7 @@ echo "<VMS>" > vms
 cat *.xml >> vms
 echo "</VMS>" >> vms
 rm *.xml
-cat vms | xq '[.VMS.VM[] | { id: .ID, name: .NAME, memory: ((.TEMPLATE.MEMORY | tonumber) / 1024), cpu: (.TEMPLATE.CPU | tonumber), disk: ((.TEMPLATE.DISK.SIZE | tonumber) / 1024), hostname: (.HISTORY_RECORDS.HISTORY | if type != "array" then [.] else . end | .[0]).HOSTNAME}]' > data.json
+cat vms | xq '[.VMS.VM[] | { id: .ID, name: .NAME, memory: ((.TEMPLATE.MEMORY | tonumber) / 1024), cpu: (.TEMPLATE.CPU | tonumber), disk: ((.TEMPLATE.DISK.SIZE | tonumber) / 1024), hostname: (.HISTORY_RECORDS.HISTORY | if type != "array" then [.] else . end | last).HOSTNAME}]' > data.json
 rm vms
 cat data.json | jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' > data.csv
 rm data.json
