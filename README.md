@@ -44,7 +44,7 @@ kubectl get pods --all-namespaces | grep Terminating | awk {'print $1" " $2'} | 
 
 # JavaScript
 
-## Scrool to The Buttom of Lazy Loaded Page
+## Scroll to The End of a Lazy Loaded Page
 
 ```js
 function scrollToBottom() {
