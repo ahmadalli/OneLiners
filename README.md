@@ -146,6 +146,11 @@ add it to `tasks` section of your ansible playbook or to the tasks of your role
     dest: /usr/local/bin/docker-compose
     url: https://github.com/docker/compose/releases/latest/download/docker-compose-{{ansible_system}}-{{ansible_userspace_architecture}}
     mode: 755
+- name: bash completion
+  get_url:
+    dest: /etc/bash_completion.d/docker-compose
+    url: https://raw.githubusercontent.com/docker/compose/master/contrib/completion/bash/docker-compose
+    mode: 755
 ```
 
 # OpenNebula
