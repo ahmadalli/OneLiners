@@ -81,7 +81,7 @@ cat /etc/passwd | grep -Ev "^#" | cut -d: -f6 | xargs -I {} sh -c 'file={}/.ssh/
 thanks to [this page](https://netbeez.net/blog/http-transaction-timing-breakdown-with-curl/). I've just added `http_code` to it
 
 ```bash
-curl -o /dev/null -s <url> -w "date +%Y-%m-%dT%H:%M:%S`\ncode:          %{http_code}\nlookup:        %{time_namelookup}\nconnect:       %{time_connect}\nappconnect:    %{time_appconnect}\npretransfer:   %{time_pretransfer}\nredirect:      %{time_redirect}\nstarttransfer: %{time_starttransfer}\ntotal:         %{time_total}\n------------------------------\n"
+curl -o /dev/null -s <url> -w "`date +%Y-%m-%dT%H:%M:%S`\ncode:          %{http_code}\nlookup:        %{time_namelookup}\nconnect:       %{time_connect}\nappconnect:    %{time_appconnect}\npretransfer:   %{time_pretransfer}\nredirect:      %{time_redirect}\nstarttransfer: %{time_starttransfer}\ntotal:         %{time_total}\n------------------------------\n"
 ```
 
 ## Moving LVM Volumes Between Hosts
